@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import TaskForm from './script/TaskForm';
+import CreateForm from './script/CreateForm';
 import TaskList from './script/TaskList';
 import Notification from './script/Notification';
+import DeleteModal from './script/DeleteModal';
+import EditModal from './script/EditModal';
+import ShareModal from './script/ShareModal';
 import { DragDropContext } from 'react-beautiful-dnd';
 import './styles/main.css';
-import './styles/modals.css'
+import './styles/modals.css';
 
 function App() {
     const [tasks, setTasks] = useState([]);
     const [notification, setNotification] = useState('');
+    const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [isEditModalOpen, setEditModalOpen] = useState(false);
+    const [isShareModalOpen, setShareModalOpen] = useState(false);
+    const [currentTaskIndex, setCurrentTaskIndex] = useState(null);
 
     useEffect(() => {
         const storedTasks = JSON.parse(localStorage.getItem('taskList')) || [];
@@ -28,10 +35,24 @@ function App() {
     function deleteTask(index) {
         setTasks(tasks.filter(task => task.index !== index));
         showNotification('Deleted a task');
+        setDeleteModalOpen(false);
     }
 
-    function editTask(index) {
+    function openDeleteModal(index) {
+        setCurrentTaskIndex(index);
+        setDeleteModalOpen(true);
     }
+
+    function openEditModal(index) {
+        setCurrentTaskIndex(index);
+        setEditModalOpen(true);
+    }
+
+    function openShareModal(index) {
+        setCurrentTaskIndex(index);
+        setShareModalOpen(true);
+    }
+    
 
     function onDragEnd(result) {
         if (!result.destination) return;
@@ -48,11 +69,24 @@ function App() {
 
     return (
         <div>
-            <TaskForm onCreate={createTask} />
+            <CreateForm onCreate={createTask} />
             <DragDropContext onDragEnd={onDragEnd}>
-                <TaskList tasks={tasks} onDelete={deleteTask} onEdit={editTask} />
+                <TaskList tasks={tasks} onDelete={openDeleteModal} onEdit={openEditModal} onShare={openShareModal}/>
             </DragDropContext>
             <Notification message={notification} />
+            <DeleteModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setDeleteModalOpen(false)}
+                onConfirm={() => deleteTask(currentTaskIndex)}
+            />
+            <EditModal
+                isOpen={isEditModalOpen}
+                onClose={() => setEditModalOpen(false)}
+            />
+            <ShareModal
+                isOpen={isShareModalOpen}
+                onClose={() => setShareModalOpen(false)}
+            />
         </div>
     );
 }

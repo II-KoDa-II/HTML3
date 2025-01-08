@@ -1,8 +1,8 @@
 import React from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Droppable, Draggable } from 'react-beautiful-dnd';
 import TaskItem from './TaskItem';
 
-function TaskList({ tasks, onDelete, onEdit, onDragEnd }) {
+function TaskList({ tasks, onDelete, onEdit, onShare }) {
     return (
         <Droppable droppableId="droppable">
             {(provided) => (
@@ -18,6 +18,7 @@ function TaskList({ tasks, onDelete, onEdit, onDragEnd }) {
                                     task={task}
                                     onDelete={onDelete}
                                     onEdit={onEdit}
+                                    onShare={onShare}
                                     provided={provided}
                                 />
                             )}

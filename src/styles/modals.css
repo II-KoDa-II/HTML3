@@ -192,7 +192,7 @@ hr {
 }
 
 .modal {
-  display: none;
+  display: flex;
   position: fixed;
   justify-content: center;
   z-index: 1;

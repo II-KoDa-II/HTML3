@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-function TaskItem({ task, onDelete, onEdit, provided }) {
+function TaskItem({ task, onDelete, onEdit, onShare, provided }) {
+    const [isHovered, setIsHovered] = useState(false);
+
     return (
         <div
             className="task"
@@ -8,6 +10,8 @@ function TaskItem({ task, onDelete, onEdit, provided }) {
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             id={task.index}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
         >
             <div className="whole-task">
                 <div className="individual-task">
@@ -21,8 +25,8 @@ function TaskItem({ task, onDelete, onEdit, provided }) {
                         </button>
                     </div>
                 </div>
-                <div className="button-container task-buttons" style={{ display: 'none' }}>
-                    <button className="task-buttons share-button"><img src="src/assets/icons/share.svg" alt="Share" /></button>
+                <div className="button-container task-buttons" style={{ display: isHovered ? 'flex' : 'none' }}>
+                    <button className="task-buttons share-button" onClick={() => onShare(task.index)}><img src="src/assets/icons/share.svg" alt="Share" /></button>
                     <button className="task-buttons info-button"><img src="src/assets/icons/info.svg" alt="Info" /></button>
                     <button className="task-buttons edit-button" onClick={() => onEdit(task.index)}><img src="src/assets/icons/edit.svg" alt="Edit" /></button>
                 </div>

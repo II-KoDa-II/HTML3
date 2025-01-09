@@ -1,10 +1,14 @@
 import React from 'react';
 
-function CreateForm({ onCreate }) {
+function CreateForm({ onCreate, showNotification }) {
     let titleInput, aboutInput;
 
     function handleSubmit(e) {
         e.preventDefault();
+        if (!titleInput.value.trim() || !aboutInput.value.trim()) {
+            showNotification('Both fields are required!');
+            return;
+        }
         onCreate(titleInput.value, aboutInput.value);
         titleInput.value = '';
         aboutInput.value = '';

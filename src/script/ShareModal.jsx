@@ -1,12 +1,12 @@
 import React from 'react';
 
-function ShareModal({ isOpen, onClose }) {
+function ShareModal({ isOpen, onClose, onCopy }) {
     if (!isOpen) return null;
 
     return (
         <div className="modal" onClick={onClose}>
             <div className="modal-share" onClick={e => e.stopPropagation()}>
-                <button id="copy-task"><img src="src/assets/icons/copy.svg"/></button>
+                <button id="copy-task" onClick={onCopy}><img src="src/assets/icons/copy.svg"/></button>
                 <button className="sharing-option"><img src="src/assets/icons/vk.svg"/></button>
                 <button className="sharing-option"><img src="src/assets/icons/telegram.svg"/></button>
                 <button className="sharing-option"><img src="src/assets/icons/whatsapp.svg"/></button>

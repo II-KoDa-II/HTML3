@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import CreateForm from './script/CreateForm';
 import TaskList from './script/TaskList';
 import Notification from './script/Notification';
@@ -16,6 +17,8 @@ function App() {
     const [isEditModalOpen, setEditModalOpen] = useState(false);
     const [isShareModalOpen, setShareModalOpen] = useState(false);
     const [currentTaskIndex, setCurrentTaskIndex] = useState(null);
+    const [title, setTitle] = useState('');
+    const [about, setAbout] = useState('');
 
     useEffect(() => {
         const storedTasks = JSON.parse(localStorage.getItem('taskList')) || [];
@@ -27,15 +30,47 @@ function App() {
     }, [tasks]);
 
     function createTask(title, about) {
-        const newTask = { title, about, index: tasks.length };
+        const newTask = {
+            id: uuidv4(),
+            title,
+            about,
+        };
         setTasks([...tasks, newTask]);
-        showNotification('Created new task');
+        showNotification('Task created');
+        setDeleteModalOpen(false);
     }
 
-    function deleteTask(index) {
-        setTasks(tasks.filter(task => task.index !== index));
-        showNotification('Deleted a task');
+    function deleteTask(id) {
+        const updatedTasks = tasks.filter(task => task.id !== id);
+        setTasks(updatedTasks);
+        showNotification('Task deleted');
         setDeleteModalOpen(false);
+    }
+
+    function updateTask(index, title, about) {
+
+        const updatedTasks = tasks.map((task, i) => 
+            i === index ? { ...task, title, about } : task
+        );
+        setTasks(updatedTasks);
+        showNotification('Updated task');
+    }
+
+    function copyTask(index) {
+        if (index === null || index < 0 || index >= tasks.length) {
+            showNotification('No task to copy.');
+            return;
+        }
+    
+        const task = tasks[index];
+        const textToCopy = `Title: ${task.title}\nAbout: ${task.about}`;
+        navigator.clipboard.writeText(textToCopy)
+            .then(() => {
+                showNotification('Task copied to clipboard!');
+            })
+            .catch(() => {
+                showNotification('Failed to copy task.');
+            });
     }
 
     function openDeleteModal(index) {
@@ -43,17 +78,21 @@ function App() {
         setDeleteModalOpen(true);
     }
 
-    function openEditModal(index) {
+    function openEditModal(id) {
+        const index = tasks.findIndex(task => task.id === id);
         setCurrentTaskIndex(index);
         setEditModalOpen(true);
+        const taskToEdit = tasks[index];
+        setTitle(taskToEdit.title);
+        setAbout(taskToEdit.about);
     }
 
-    function openShareModal(index) {
+    function openShareModal(id) {
+        const index = tasks.findIndex(task => task.id === id);
         setCurrentTaskIndex(index);
         setShareModalOpen(true);
     }
     
-
     function onDragEnd(result) {
         if (!result.destination) return;
         const reorderedTasks = Array.from(tasks);
@@ -69,11 +108,19 @@ function App() {
 
     return (
         <div>
-            <CreateForm onCreate={createTask} />
+            <CreateForm
+                onCreate={createTask}
+                showNotification={showNotification}
+            />
             <DragDropContext onDragEnd={onDragEnd}>
-                <TaskList tasks={tasks} onDelete={openDeleteModal} onEdit={openEditModal} onShare={openShareModal}/>
+                <TaskList 
+                    tasks={tasks}
+                    onDelete={openDeleteModal}
+                    onEdit={openEditModal}
+                    onShare={openShareModal}                
+                />
             </DragDropContext>
-            <Notification message={notification} />
+            <Notification message={notification}/>
             <DeleteModal
                 isOpen={isDeleteModalOpen}
                 onClose={() => setDeleteModalOpen(false)}
@@ -82,10 +129,18 @@ function App() {
             <EditModal
                 isOpen={isEditModalOpen}
                 onClose={() => setEditModalOpen(false)}
+                onSave={(title, about) => {
+                    updateTask(currentTaskIndex, title, about);
+                    setEditModalOpen(false);
+                }}
+                title={title}
+                about={about}
+                showNotification={showNotification}
             />
             <ShareModal
                 isOpen={isShareModalOpen}
                 onClose={() => setShareModalOpen(false)}
+                onCopy={() => copyTask(currentTaskIndex)}
             />
         </div>
     );

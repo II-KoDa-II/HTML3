@@ -7,9 +7,9 @@ function DeleteModal({ isOpen, onClose, onConfirm }) {
         <div className="modal" onClick={onClose}>
             <div className="modal-delete" onClick={e => e.stopPropagation()}>
                 <p>Delete this task?</p>
-                <div class="horizontal-flex">
-                    <button class="text-button" onClick={onConfirm}>Yes</button>
-                    <button class="cancel text-button" onClick={onClose}>No</button>
+                <div className="horizontal-flex">
+                    <button className="text-button" onClick={onConfirm}>Yes</button>
+                    <button className="cancel text-button" onClick={onClose}>No</button>
                 </div>
             </div>
         </div>

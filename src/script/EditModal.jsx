@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-function EditModal({ isOpen, onClose }) {
-    const [title, setTitle] = useState('');
-    const [about, setAbout] = useState('');
+function EditModal({ isOpen, onClose, onSave, title: initialTitle, about: initialAbout, showNotification }) {
+    const [title, setTitle] = useState(initialTitle);
+    const [about, setAbout] = useState(initialAbout);
+
+    useEffect(() => {
+        setTitle(initialTitle);
+        setAbout(initialAbout);
+    }, [initialTitle, initialAbout]);
 
     if (!isOpen) return null;
 
@@ -10,12 +15,34 @@ function EditModal({ isOpen, onClose }) {
         <div className="modal">
             <div className="modal-edit">
                 <div className="edit-form">
-                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Task"/>
-                    <textarea value={about} onChange={(e) => setAbout(e.target.value)} placeholder="About..."/>
+                    <input
+                        type="text"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        placeholder="Task"
+                    />
+                    <textarea
+                        value={about}
+                        onChange={(e) => setAbout(e.target.value)}
+                        placeholder="About..."
+                    />
                 </div>
-                <div class="horizontal-flex">
+                <div className="horizontal-flex">
                     <button type="button" className="text-button" onClick={onClose}>Cancel</button>
-                    <button type="button" className="text-button" onClick={onClose}>Save</button>
+                    <button
+                        type="button"
+                        className="text-button"
+                        onClick={() => {
+                            if (!title.trim() || !about.trim()) {
+                                showNotification('Both fields are required!');
+                                return;
+                            }
+                            onSave(title, about);
+                            onClose();
+                        }}
+                    >
+                        Save
+                    </button>
                 </div>
             </div>
         </div>

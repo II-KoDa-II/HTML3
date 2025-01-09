@@ -53,7 +53,7 @@ function App() {
             i === index ? { ...task, title, about } : task
         );
         setTasks(updatedTasks);
-        showNotification('Updated task');
+        showNotification('Changes saved');
     }
 
     function copyTask(index) {
@@ -66,10 +66,11 @@ function App() {
         const textToCopy = `Title: ${task.title}\nAbout: ${task.about}`;
         navigator.clipboard.writeText(textToCopy)
             .then(() => {
-                showNotification('Task copied to clipboard!');
+                showNotification('Copied to clipboard');
             })
             .catch(() => {
-                showNotification('Failed to copy task.');
+                console.error('Failed to copy: ', err);
+                showNotification('Failed to copy');
             });
     }
 

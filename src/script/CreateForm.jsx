@@ -6,7 +6,7 @@ function CreateForm({ onCreate, showNotification }) {
     function handleSubmit(e) {
         e.preventDefault();
         if (!titleInput.value.trim() || !aboutInput.value.trim()) {
-            showNotification('Both fields are required!');
+            showNotification('Failed to create a task:\nTitle and About fields must be filled in');
             return;
         }
         onCreate(titleInput.value, aboutInput.value);

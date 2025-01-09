@@ -34,7 +34,7 @@ function EditModal({ isOpen, onClose, onSave, title: initialTitle, about: initia
                         className="text-button"
                         onClick={() => {
                             if (!title.trim() || !about.trim()) {
-                                showNotification('Both fields are required!');
+                                showNotification('Failed to create a task:\nTitle and About fields must be filled in');
                                 return;
                             }
                             onSave(title, about);
